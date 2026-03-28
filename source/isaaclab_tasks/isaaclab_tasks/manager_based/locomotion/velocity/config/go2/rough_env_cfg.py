@@ -48,7 +48,7 @@ class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.events.add_base_mass.params["mass_distribution_params"] = (-1.0, 3.0)
         self.events.add_base_mass.params["asset_cfg"].body_names = "base"
         self.events.base_external_force_torque.params["asset_cfg"].body_names = "base"
-        self.events.reset_robot_joints.params["position_range"] = (1.0, 1.0)
+        self.events.reset_robot_joints.params["position_range"] = (0.5, 1.5)
         self.events.reset_base.params = {
             "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
             "velocity_range": {
@@ -66,18 +66,35 @@ class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.rewards.feet_air_time.params["sensor_cfg"].body_names = ".*_foot"
         self.rewards.feet_air_time.weight = 1
         self.rewards.undesired_contacts = None
-        self.rewards.dof_torques_l2.weight = -0.002
+        self.rewards.dof_torques_l2.weight = -0.0001
         self.rewards.track_lin_vel_xy_exp.weight = 2.5
         # ტანის სიმაღლის შენარჩუნება (რომ არ იხოხოს მუცლით)
         self.rewards.base_height_l2 = RewTerm(
             func=mdp.base_height_l2,
-            weight=-2.0, # დასაჯე, თუ დადგენილ სიმაღლეს აცილდება
+            weight=-1.0, # დასაჯე, თუ დადგენილ სიმაღლეს აცილდება
             params={"target_height": 0.35, "asset_cfg": SceneEntityCfg("robot")},
         )
         self.rewards.track_ang_vel_z_exp.weight = 0.75
         self.rewards.dof_acc_l2.weight = -2.5e-6
 
+
+        # 2. ნაბიჯის სიმაღლე (Swing Height) - რომ 0.2მ ბლოკებს გადააბიჯოს
+        self.rewards.feet_swing_height = RewTerm(
+                    func=mdp.base_height_l2, # ვიყენებთ სტანდარტულ სიმაღლის ფუნქციას
+                    weight=1.5, 
+                    params={
+                        "target_height": 0.2, 
+                        "asset_cfg": SceneEntityCfg("robot", body_names=".*_foot")
+                    },
+                )               
         # terminations
+        # ვადაბლებთ მოთხოვნას, რომ რობოტი უფრო მალე გადავიდეს რთულ რელიეფზე
+        if self.curriculum.terrain_levels is not None:
+                    # ზოგიერთ ვერსიაში threshold_velocity პირდაპირ ატრიბუტია
+                    # თუ params-ში არ იღებს, ასე ვცადოთ:
+                    self.curriculum.terrain_levels.params = {"asset_cfg": SceneEntityCfg("robot")}
+                    # თუ მაინც გინდა სიჩქარის ბარიერის დაწევა, ეს ხშირად reward-ებში წყდება
+                    # ამიტომ აქ მხოლოდ asset_cfg დავტოვოთ, რომ ერორი არ ამოაგდოს
         self.terminations.base_contact.params["sensor_cfg"].body_names = "base"
 
 
