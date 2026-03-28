@@ -12,7 +12,8 @@ from isaaclab.managers import EventTermCfg as EventTerm # ეს ფაილი
 # Pre-defined configs
 ##
 from isaaclab_assets.robots.unitree import UNITREE_GO2_CFG  # isort: skip
-
+from isaaclab.managers import RewardTermCfg as RewTerm
+import isaaclab.envs.mdp as mdp
 
 @configclass
 class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
@@ -67,6 +68,12 @@ class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.rewards.undesired_contacts = None
         self.rewards.dof_torques_l2.weight = -0.002
         self.rewards.track_lin_vel_xy_exp.weight = 2.5
+        # ტანის სიმაღლის შენარჩუნება (რომ არ იხოხოს მუცლით)
+        self.rewards.base_height_l2 = RewTerm(
+            func=mdp.base_height_l2,
+            weight=-2.0, # დასაჯე, თუ დადგენილ სიმაღლეს აცილდება
+            params={"target_height": 0.35, "asset_cfg": SceneEntityCfg("robot")},
+        )
         self.rewards.track_ang_vel_z_exp.weight = 0.75
         self.rewards.dof_acc_l2.weight = -2.5e-6
 
