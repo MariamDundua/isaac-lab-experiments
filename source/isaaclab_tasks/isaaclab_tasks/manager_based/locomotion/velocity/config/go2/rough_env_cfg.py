@@ -6,96 +6,92 @@
 from isaaclab.utils import configclass
 
 from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import LocomotionVelocityRoughEnvCfg
-from isaaclab.managers import SceneEntityCfg
-from isaaclab.managers import EventTermCfg as EventTerm # ეს ფაილის თავში უნდა იყოს
+
 ##
 # Pre-defined configs
 ##
 from isaaclab_assets.robots.unitree import UNITREE_GO2_CFG  # isort: skip
-from isaaclab.managers import RewardTermCfg as RewTerm
-import isaaclab.envs.mdp as mdp
+
 
 @configclass
 class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     def __post_init__(self):
-        # post init of parent
+        # 1. მშობელი კლასის ინიციალიზაცია
         super().__post_init__()
 
+        # --- რობოტის და სცენის კონფიგურაცია ---
         self.scene.robot = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/base"
-        # scale down the terrains because the robot is small
-        self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.05, 0.2)
-        self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_range = (0.02, 0.12)
-        self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_step = 0.01
-
-        # reduce action scale
+        
+        # რელიეფის სკალირება მცირე რობოტისთვის
+        self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
+        self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_range = (0.01, 0.06)
+        
+        # მოქმედებების მასშტაბი (ნაკლები "ნერვული" მოძრაობისთვის)
         self.actions.joint_pos.scale = 0.25
 
-        # event
-        #self.events.push_robot = None
+        # --- 2. Domain Randomization (Sim-to-Real) ---
+        # ვიყენებთ შემოწმებას, რადგან Isaac Lab-ის ვერსიებში ზოგი Dict-ია, ზოგი ConfigClass
+
+        # მასის რანდომიზაცია
+        if hasattr(self.events, "add_base_mass"):
+            target = self.events.add_base_mass
+            params = target["params"] if isinstance(target, dict) else target.params
+            params["mass_distribution_params"] = (-1.0, 3.0)
+            params["asset_cfg"].body_names = "base"
+
+        # ხელის კვრა (Push Robot)
+        if hasattr(self.events, "push_robot"):
+            target = self.events.push_robot
+            params = target["params"] if isinstance(target, dict) else target.params
+            params["velocity_range"] = {"x": (-0.8, 0.8), "y": (-0.8, 0.8)}
+
+        # ხახუნის რანდომიზაცია (Friction)
+        if hasattr(self.events, "terrain_material_properties"):
+            target = self.events.terrain_material_properties
+            params = target["params"] if isinstance(target, dict) else target.params
+            params["static_friction_range"] = (0.4, 1.25)
+            params["dynamic_friction_range"] = (0.4, 1.25)
+
+        # --- 3. Observation Noise ---
+        # IMU და სიჩქარის ხმაური
+        self.observations.policy.base_lin_vel.noise.n_min = -0.1
+        self.observations.policy.base_lin_vel.noise.n_max = 0.1
         
+        # ლიდარის (Height Scan) ხმაური
+        if hasattr(self.observations.policy, "height_scan"):
+            self.observations.policy.height_scan.noise.n_min = -0.05
+            self.observations.policy.height_scan.noise.n_max = 0.05
 
-        self.events.push_robot = EventTerm(
-            func=self.events.base_external_force_torque.func,
-            mode="interval",
-            interval_range_s=(10.0, 15.0), # ყოველ 10-15 წამში ერთხელ
-            params={
-                "asset_cfg": SceneEntityCfg("robot"),
-                "force_range": (10.0, 15.0), # ძალა ნიუტონებში
-                "torque_range": (0.0, 0.0),
-            },
-        )
-        self.events.add_base_mass.params["mass_distribution_params"] = (-1.0, 3.0)
-        self.events.add_base_mass.params["asset_cfg"].body_names = "base"
-        self.events.base_external_force_torque.params["asset_cfg"].body_names = "base"
-        self.events.reset_robot_joints.params["position_range"] = (0.5, 1.5)
-        self.events.reset_base.params = {
-            "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
-            "velocity_range": {
-                "x": (0.0, 0.0),
-                "y": (0.0, 0.0),
-                "z": (0.0, 0.0),
-                "roll": (0.0, 0.0),
-                "pitch": (0.0, 0.0),
-                "yaw": (0.0, 0.0),
-            },
-        }
-        self.events.base_com = None
+        # ბრძანების დაყოვნება (Action Delay)
+        self.actions.joint_pos.delay = (1, 2)
 
-        # rewards
+        # --- 4. Rewards & Terminations ---
+        # ფეხების ჰაერში ყოფნის დრო
         self.rewards.feet_air_time.params["sensor_cfg"].body_names = ".*_foot"
-        self.rewards.feet_air_time.weight = 1
-        self.rewards.undesired_contacts = None
-        self.rewards.dof_torques_l2.weight = -0.0001
-        self.rewards.track_lin_vel_xy_exp.weight = 2.5
-        # ტანის სიმაღლის შენარჩუნება (რომ არ იხოხოს მუცლით)
-        self.rewards.base_height_l2 = RewTerm(
-            func=mdp.base_height_l2,
-            weight=-1.0, # დასაჯე, თუ დადგენილ სიმაღლეს აცილდება
-            params={"target_height": 0.35, "asset_cfg": SceneEntityCfg("robot")},
-        )
-        self.rewards.track_ang_vel_z_exp.weight = 0.75
-        self.rewards.dof_acc_l2.weight = -2.5e-6
+        self.rewards.feet_air_time.weight = 0.02
+        
+        # არასასურველი კონტაქტები (მუხლები)
+        if self.rewards.undesired_contacts is not None:
+            self.rewards.undesired_contacts.weight = -1.0
+            self.rewards.undesired_contacts.params["sensor_cfg"].body_names = ".*_thigh"
 
-
-        # 2. ნაბიჯის სიმაღლე (Swing Height) - რომ 0.2მ ბლოკებს გადააბიჯოს
-        self.rewards.feet_swing_height = RewTerm(
-                    func=mdp.base_height_l2, # ვიყენებთ სტანდარტულ სიმაღლის ფუნქციას
-                    weight=1.5, 
-                    params={
-                        "target_height": 0.2, 
-                        "asset_cfg": SceneEntityCfg("robot", body_names=".*_foot")
-                    },
-                )               
-        # terminations
-        # ვადაბლებთ მოთხოვნას, რომ რობოტი უფრო მალე გადავიდეს რთულ რელიეფზე
-        if self.curriculum.terrain_levels is not None:
-                    # ზოგიერთ ვერსიაში threshold_velocity პირდაპირ ატრიბუტია
-                    # თუ params-ში არ იღებს, ასე ვცადოთ:
-                    self.curriculum.terrain_levels.params = {"asset_cfg": SceneEntityCfg("robot")}
-                    # თუ მაინც გინდა სიჩქარის ბარიერის დაწევა, ეს ხშირად reward-ებში წყდება
-                    # ამიტომ აქ მხოლოდ asset_cfg დავტოვოთ, რომ ერორი არ ამოაგდოს
+        # ტერმინაცია ბაზის კონტაქტისას
         self.terminations.base_contact.params["sensor_cfg"].body_names = "base"
+        
+        # სიჩქარის მიყოლის წონები
+        self.rewards.track_lin_vel_xy_exp.weight = 1.5
+        self.rewards.track_ang_vel_z_exp.weight = 0.75
+
+        # RecordVideo: eye/lookat are world-axis offsets from viewer_origin (see ViewportCameraController).
+        # With origin_type=asset_root the origin follows the robot but offsets do NOT yaw with the body,
+        # so forward walking often looks "sideways" on screen. env + env_index fixes the camera to env_0
+        # so the robot moves through the frame like a normal yard shot (wider = less zoom).
+        self.viewer.origin_type = "env"
+        self.viewer.env_index = 0
+        self.viewer.asset_name = None
+        self.viewer.eye = (8.0, 8.0, 5.5)
+        self.viewer.lookat = (0.0, 0.0, 0.45)
 
 
 @configclass
@@ -103,20 +99,29 @@ class UnitreeGo2RoughEnvCfg_PLAY(UnitreeGo2RoughEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
-
-        # make a smaller scene for play
-        self.scene.num_envs = 50
+        # Smaller scene for play / video
+        self.scene.num_envs = 32
         self.scene.env_spacing = 2.5
-        # spawn the robot randomly in the grid (instead of their terrain levels)
-        self.scene.terrain.max_init_terrain_level = None
+        # Match training cap (0); use None only if you want random terrain levels at play time.
+        self.scene.terrain.max_init_terrain_level = 0
         # reduce the number of terrains to save memory
         if self.scene.terrain.terrain_generator is not None:
             self.scene.terrain.terrain_generator.num_rows = 5
             self.scene.terrain.terrain_generator.num_cols = 5
             self.scene.terrain.terrain_generator.curriculum = False
 
-        # disable randomization for play
+        # Wider shot for tiled play (optional): uncomment to pull camera farther from env_0.
+        # self.viewer.eye = (12.0, 12.0, 7.0)
+
         self.observations.policy.enable_corruption = False
-        # remove random pushing event
-        self.events.base_external_force_torque = None
-        self.events.push_robot = None
+        
+        # 2. ვთიშავთ რანდომიზებულ მოვლენებს (რომ ტესტისას რობოტს ხელი არ ჰკრან)
+        if hasattr(self.events, "base_external_force_torque"):
+            self.events.base_external_force_torque = None
+            
+        if hasattr(self.events, "push_robot"):
+            self.events.push_robot = None
+            
+        # 3. ვთიშავთ მასის რანდომიზაციას ტესტირებისას
+        if hasattr(self.events, "add_base_mass"):
+            self.events.add_base_mass = None
