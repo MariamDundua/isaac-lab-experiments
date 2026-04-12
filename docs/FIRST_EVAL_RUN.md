@@ -27,7 +27,7 @@ Then:
 
 ```bash
 cd /path/to/isaac-lab-experiments
-pip install tensorboard   # if needed
+pip3 install -r requirements.txt   # tensorboard for export_training_metrics.py
 python3 scripts/export_training_metrics.py ./tb_training_run -o artifacts/MY_FIRST_REPORT/metrics_training_last.json
 ```
 
