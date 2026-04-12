@@ -1,4 +1,6 @@
-# Large binaries — keep scripts/docs in git; store videos elsewhere or use Git LFS
+# Large binaries (videos + checkpoints): Git/GitHub are poor fits — huge clones, slow history,
+# and GitHub blocks files >100MB. Keep code + docs in git; back up artifacts to cloud storage,
+# Hugging Face, or a Release zip before terminating a cloud instance.
 artifacts/**/*.mp4
 artifacts/**/videos/
 *.pt
@@ -7,3 +9,5 @@ __pycache__/
 *.pyc
 .env
 .venv/
+# Local backup tarballs from scripts/backup_portfolio.sh
+backups/
