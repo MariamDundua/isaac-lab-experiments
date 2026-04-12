@@ -64,24 +64,24 @@ run_regime "stress_05_fwd_lat" \
 
 # --- 6–8: terrain init difficulty (caps max initial curriculum level) ---
 run_regime "stress_06_terrain_maxinit_0" \
-  "${BASE_MID} env.scene.terrain.max_init_terrain_level=\[0\]" \
+  "${BASE_MID} env.scene.terrain.max_init_terrain_level=0" \
   "Terrain: max_init_terrain_level=0 (easiest spawn band)"
 
 run_regime "stress_07_terrain_maxinit_4" \
-  "${BASE_MID} env.scene.terrain.max_init_terrain_level=\[4\]" \
+  "${BASE_MID} env.scene.terrain.max_init_terrain_level=4" \
   "Terrain: max_init_terrain_level=4"
 
 run_regime "stress_08_terrain_maxinit_8" \
-  "${BASE_MID} env.scene.terrain.max_init_terrain_level=\[8\]" \
+  "${BASE_MID} env.scene.terrain.max_init_terrain_level=8" \
   "Terrain: max_init_terrain_level=8 (harder)"
 
 # --- 9–10: ground (terrain) friction ---
 run_regime "stress_09_ground_friction_low" \
-  "${BASE_MID} env.scene.terrain.physics_material.static_friction=\[0.28\] env.scene.terrain.physics_material.dynamic_friction=\[0.22\]" \
+  "${BASE_MID} env.scene.terrain.physics_material.static_friction=0.28 env.scene.terrain.physics_material.dynamic_friction=0.22" \
   "Ground friction low (slippery)"
 
 run_regime "stress_10_ground_friction_high" \
-  "${BASE_MID} env.scene.terrain.physics_material.static_friction=\[1.45\] env.scene.terrain.physics_material.dynamic_friction=\[1.25\]" \
+  "${BASE_MID} env.scene.terrain.physics_material.static_friction=1.45 env.scene.terrain.physics_material.dynamic_friction=1.25" \
   "Ground friction high (sticky)"
 
 # --- 11: robot-body friction randomization range (startup event) ---
@@ -91,24 +91,24 @@ run_regime "stress_11_robot_friction_low" \
 
 # --- 12–15: observations ---
 run_regime "stress_12_obs_corruption_on" \
-  "${BASE_MID} env.observations.policy.enable_corruption=\[true\]" \
+  "${BASE_MID} env.observations.policy.enable_corruption=true" \
   "Obs: enable_corruption=true (train-like noise)"
 
 run_regime "stress_13_obs_linvel_noise_hi" \
-  "${BASE_MID} env.observations.policy.base_lin_vel.noise.n_min=\[-0.35\] env.observations.policy.base_lin_vel.noise.n_max=\[0.35\]" \
+  "${BASE_MID} env.observations.policy.base_lin_vel.noise.n_min=-0.35 env.observations.policy.base_lin_vel.noise.n_max=0.35" \
   "Obs: high base_lin_vel uniform noise"
 
 run_regime "stress_14_obs_height_scan_noise_hi" \
-  "${BASE_MID} env.observations.policy.height_scan.noise.n_min=\[-0.12\] env.observations.policy.height_scan.noise.n_max=\[0.12\]" \
+  "${BASE_MID} env.observations.policy.height_scan.noise.n_min=-0.12 env.observations.policy.height_scan.noise.n_max=0.12" \
   "Obs: high height_scan noise"
 
 run_regime "stress_15_obs_joint_vel_noise_hi" \
-  "${BASE_MID} env.observations.policy.joint_vel.noise.n_min=\[-3.0\] env.observations.policy.joint_vel.noise.n_max=\[3.0\]" \
+  "${BASE_MID} env.observations.policy.joint_vel.noise.n_min=-3.0 env.observations.policy.joint_vel.noise.n_max=3.0" \
   "Obs: high joint_vel noise"
 
 # --- 16–17: command distribution ---
 run_regime "stress_16_cmd_standing_mix" \
-  "${BASE_MID} env.commands.base_velocity.rel_standing_envs=\[0.45\]" \
+  "${BASE_MID} env.commands.base_velocity.rel_standing_envs=0.45" \
   "Command: ~45% standing envs"
 
 run_regime "stress_17_cmd_yaw_spin" \

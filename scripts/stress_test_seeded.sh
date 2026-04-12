@@ -56,11 +56,11 @@ run_seeded_regime "imp_03_fwd_fast" \
   "Important: forward fast (vx=1.0)"
 
 run_seeded_regime "imp_08_terrain_hard" \
-  "${BASE_MID} env.scene.terrain.max_init_terrain_level=\[8\]" \
+  "${BASE_MID} env.scene.terrain.max_init_terrain_level=8" \
   "Important: hard terrain spawn (max_init=8)"
 
 run_seeded_regime "imp_12_obs_corruption" \
-  "${BASE_MID} env.observations.policy.enable_corruption=\[true\]" \
+  "${BASE_MID} env.observations.policy.enable_corruption=true" \
   "Important: observation corruption ON"
 
 run_seeded_regime "imp_20_push_hi" \
