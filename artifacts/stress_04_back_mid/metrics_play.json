@@ -1,0 +1,25 @@
+{
+  "task": "Isaac-Velocity-Rough-Unitree-Go2-Play-v0",
+  "checkpoint": "/workspace/isaaclab/logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt",
+  "num_env_steps": 400,
+  "mean_reward_per_step": 0.04033842132106656,
+  "total_done_events": 0,
+  "extras_log_latest": {
+    "Episode_Reward/track_lin_vel_xy_exp": 0.0,
+    "Episode_Reward/track_ang_vel_z_exp": 0.0,
+    "Episode_Reward/lin_vel_z_l2": 0.0,
+    "Episode_Reward/ang_vel_xy_l2": 0.0,
+    "Episode_Reward/dof_torques_l2": 0.0,
+    "Episode_Reward/dof_acc_l2": 0.0,
+    "Episode_Reward/action_rate_l2": 0.0,
+    "Episode_Reward/feet_air_time": 0.0,
+    "Episode_Reward/undesired_contacts": 0.0,
+    "Episode_Reward/flat_orientation_l2": 0.0,
+    "Episode_Reward/dof_pos_limits": 0.0,
+    "Curriculum/terrain_levels": 3.0625,
+    "Metrics/base_velocity/error_vel_xy": 0.0,
+    "Metrics/base_velocity/error_vel_yaw": 0.0,
+    "Episode_Termination/time_out": 0.0,
+    "Episode_Termination/base_contact": 0.0
+  }
+}

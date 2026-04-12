@@ -1,11 +1,12 @@
 artifact_name=MY_FIRST_REPORT
-date=2026-04-12T20:50:49+00:00
+date=2026-04-12T20:57:59+00:00
 container=vscode
 task=Isaac-Velocity-Rough-Unitree-Go2-Play-v0
 checkpoint=logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt
 num_envs=16
 video_length=400
 hydra.run.dir=/tmp/isaaclab_hydra_eval_MY_FIRST_REPORT
+extra_hydra=<none>
 
 Command:
-docker exec vscode bash -lc 'cd /workspace/isaaclab && /isaac-sim/python.sh scripts/reinforcement_learning/rsl_rl/play.py --task Isaac-Velocity-Rough-Unitree-Go2-Play-v0 --num_envs 16 --checkpoint logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt --headless --enable_cameras --video --video_length 400 hydra.run.dir=/tmp/isaaclab_hydra_eval_MY_FIRST_REPORT'
+docker exec vscode bash -lc 'cd /workspace/isaaclab && /isaac-sim/python.sh scripts/reinforcement_learning/rsl_rl/play.py --task Isaac-Velocity-Rough-Unitree-Go2-Play-v0 --num_envs 16 --checkpoint logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt --headless --enable_cameras --video --video_length 400 hydra.run.dir=/tmp/isaaclab_hydra_eval_MY_FIRST_REPORT '
