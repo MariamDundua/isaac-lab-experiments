@@ -97,12 +97,11 @@ class UnitreeGo2RoughEnvCfg_PLAY(UnitreeGo2RoughEnvCfg):
             self.scene.terrain.terrain_generator.num_cols = 5
             self.scene.terrain.terrain_generator.curriculum = False
 
-        # Match eval to checkpoints trained without extra DR (e.g. model_1499.pt)
+        # Default: no obs corruption (Hydra can turn on for stress tests).
         self.observations.policy.enable_corruption = False
         self.events.base_external_force_torque = None
-        self.events.push_robot = None
-        self.events.add_base_mass = None
-        self.events.physics_material = None
+        # Keep push_robot, add_base_mass, physics_material so Hydra can stress them
+        # (see isaac-lab-experiments docs/STRESS_TEST.md).
 
         # Wider shot: uncomment
         # self.viewer.eye = (12.0, 12.0, 7.0)

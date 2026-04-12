@@ -25,6 +25,11 @@ CHECKPOINT="${ISAAC_CHECKPOINT:?Set ISAAC_CHECKPOINT to checkpoint path inside c
 NAME="${ARTIFACT_NAME:-eval_$(date +%Y-%m-%d_%H-%M-%S)}"
 NUM_ENVS="${NUM_ENVS:-16}"
 VIDEO_LENGTH="${VIDEO_LENGTH:-400}"
+PLAY_SEED="${PLAY_SEED:-}"
+SEED_CLI=""
+if [ -n "$PLAY_SEED" ]; then
+  SEED_CLI="--seed $PLAY_SEED"
+fi
 OUT="$ROOT/artifacts/$NAME"
 HYDRA_DIR="/tmp/isaaclab_hydra_eval_${NAME//\//_}"
 EXTRA_HYDRA="${EXTRA_HYDRA:-}"
@@ -61,6 +66,7 @@ fi
   echo "checkpoint=$CHECKPOINT"
   echo "num_envs=$NUM_ENVS"
   echo "video_length=$VIDEO_LENGTH"
+  echo "play_seed=${PLAY_SEED:-<default>}"
   echo "hydra.run.dir=$HYDRA_DIR"
   echo "metrics_json_container=$METRICS_TMP"
   echo "extra_hydra=${EXTRA_HYDRA:-<none>}"
@@ -73,6 +79,7 @@ docker exec "$CONTAINER" bash -lc "cd /workspace/isaaclab && /isaac-sim/python.s
   --task \"$TASK\" \
   --num_envs \"$NUM_ENVS\" \
   --checkpoint \"$CHECKPOINT\" \
+  $SEED_CLI \
   --headless --enable_cameras --video --video_length \"$VIDEO_LENGTH\" \
   ${METRICS_INLINE} \
   hydra.run.dir=\"$HYDRA_DIR\" \
