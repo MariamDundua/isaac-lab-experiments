@@ -11,6 +11,8 @@
 #   export NUM_ENVS=16
 #   export VIDEO_LENGTH=400
 #   export TASK="Isaac-Velocity-Rough-Unitree-Go2-Play-v0"
+#   export EXTRA_HYDRA='env.commands.base_velocity.ranges.lin_vel_x=\[0.5,0.5\] env.commands.base_velocity.ranges.lin_vel_y=\[0.0,0.0\]'
+#       (optional Hydra overrides for command ranges — see docs/STRESS_TEST.md)
 
 set -euo pipefail
 
@@ -23,6 +25,7 @@ NUM_ENVS="${NUM_ENVS:-16}"
 VIDEO_LENGTH="${VIDEO_LENGTH:-400}"
 OUT="$ROOT/artifacts/$NAME"
 HYDRA_DIR="/tmp/isaaclab_hydra_eval_${NAME//\//_}"
+EXTRA_HYDRA="${EXTRA_HYDRA:-}"
 
 mkdir -p "$OUT"
 
@@ -38,9 +41,10 @@ LOG_DIR_FOR_CP="$(dirname "$CHECKPOINT")"
   echo "num_envs=$NUM_ENVS"
   echo "video_length=$VIDEO_LENGTH"
   echo "hydra.run.dir=$HYDRA_DIR"
+  echo "extra_hydra=${EXTRA_HYDRA:-<none>}"
   echo
   echo "Command:"
-  echo "docker exec $CONTAINER bash -lc 'cd /workspace/isaaclab && /isaac-sim/python.sh scripts/reinforcement_learning/rsl_rl/play.py --task $TASK --num_envs $NUM_ENVS --checkpoint $CHECKPOINT --headless --enable_cameras --video --video_length $VIDEO_LENGTH hydra.run.dir=$HYDRA_DIR'"
+  echo "docker exec $CONTAINER bash -lc 'cd /workspace/isaaclab && /isaac-sim/python.sh scripts/reinforcement_learning/rsl_rl/play.py --task $TASK --num_envs $NUM_ENVS --checkpoint $CHECKPOINT --headless --enable_cameras --video --video_length $VIDEO_LENGTH hydra.run.dir=$HYDRA_DIR ${EXTRA_HYDRA}'"
 } | tee "$OUT/METADATA.txt"
 
 docker exec "$CONTAINER" bash -lc "cd /workspace/isaaclab && /isaac-sim/python.sh scripts/reinforcement_learning/rsl_rl/play.py \
@@ -48,7 +52,8 @@ docker exec "$CONTAINER" bash -lc "cd /workspace/isaaclab && /isaac-sim/python.s
   --num_envs \"$NUM_ENVS\" \
   --checkpoint \"$CHECKPOINT\" \
   --headless --enable_cameras --video --video_length \"$VIDEO_LENGTH\" \
-  hydra.run.dir=\"$HYDRA_DIR\""
+  hydra.run.dir=\"$HYDRA_DIR\" \
+  ${EXTRA_HYDRA}"
 
 mkdir -p "$OUT/videos"
 docker cp "$CONTAINER:/workspace/isaaclab/${LOG_DIR_FOR_CP}/videos/play/." "$OUT/videos/" || {
