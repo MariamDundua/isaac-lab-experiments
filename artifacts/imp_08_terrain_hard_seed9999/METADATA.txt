@@ -1,0 +1,14 @@
+artifact_name=imp_08_terrain_hard_seed9999
+date=2026-04-12T22:00:39+00:00
+container=vscode
+task=Isaac-Velocity-Rough-Unitree-Go2-Play-v0
+checkpoint=logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt
+num_envs=16
+video_length=400
+play_seed=9999
+hydra.run.dir=/tmp/isaaclab_hydra_eval_imp_08_terrain_hard_seed9999
+metrics_json_container=/tmp/isaaclab_metrics_imp_08_terrain_hard_seed9999.json
+extra_hydra=env.commands.base_velocity.ranges.lin_vel_x=\[0.6,0.6\] env.commands.base_velocity.ranges.lin_vel_y=\[0.0,0.0\] env.scene.terrain.max_init_terrain_level=8
+play_mode=play_eval_metrics.py -> metrics_play.json
+
+Command (approx): docker exec vscode ... scripts/reinforcement_learning/rsl_rl/play_eval_metrics.py ... --metrics_json /tmp/isaaclab_metrics_imp_08_terrain_hard_seed9999.json --skip_export ... hydra... env.commands.base_velocity.ranges.lin_vel_x=\[0.6,0.6\] env.commands.base_velocity.ranges.lin_vel_y=\[0.0,0.0\] env.scene.terrain.max_init_terrain_level=8

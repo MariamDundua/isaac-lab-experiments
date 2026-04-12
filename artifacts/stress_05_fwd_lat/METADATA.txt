@@ -1,13 +1,14 @@
 artifact_name=stress_05_fwd_lat
-date=2026-04-12T21:07:48+00:00
+date=2026-04-12T21:27:42+00:00
 container=vscode
 task=Isaac-Velocity-Rough-Unitree-Go2-Play-v0
 checkpoint=logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt
 num_envs=16
 video_length=400
+play_seed=<default>
 hydra.run.dir=/tmp/isaaclab_hydra_eval_stress_05_fwd_lat
 metrics_json_container=/tmp/isaaclab_metrics_stress_05_fwd_lat.json
 extra_hydra=env.commands.base_velocity.ranges.lin_vel_x=\[0.4,0.4\] env.commands.base_velocity.ranges.lin_vel_y=\[-0.15,0.15\]
-play_mode=play_eval_metrics.py -> metrics_play.json
+play_mode=play.py (stock; no metrics_play.json)
 
-Command (approx): docker exec vscode ... scripts/reinforcement_learning/rsl_rl/play_eval_metrics.py ... --metrics_json /tmp/isaaclab_metrics_stress_05_fwd_lat.json --skip_export ... hydra... env.commands.base_velocity.ranges.lin_vel_x=\[0.4,0.4\] env.commands.base_velocity.ranges.lin_vel_y=\[-0.15,0.15\]
+Command (approx): docker exec vscode ... scripts/reinforcement_learning/rsl_rl/play.py ...  ... hydra... env.commands.base_velocity.ranges.lin_vel_x=\[0.4,0.4\] env.commands.base_velocity.ranges.lin_vel_y=\[-0.15,0.15\]

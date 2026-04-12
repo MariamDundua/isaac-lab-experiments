@@ -1,13 +1,13 @@
-artifact_name=stress_03_fwd_fast
-date=2026-04-12T21:26:29+00:00
+artifact_name=imp_03_fwd_fast_seed1337
+date=2026-04-12T21:50:18+00:00
 container=vscode
 task=Isaac-Velocity-Rough-Unitree-Go2-Play-v0
 checkpoint=logs/rsl_rl/unitree_go2_rough/2026-04-12_18-11-57/model_1499.pt
 num_envs=16
 video_length=400
-play_seed=<default>
-hydra.run.dir=/tmp/isaaclab_hydra_eval_stress_03_fwd_fast
-metrics_json_container=/tmp/isaaclab_metrics_stress_03_fwd_fast.json
+play_seed=1337
+hydra.run.dir=/tmp/isaaclab_hydra_eval_imp_03_fwd_fast_seed1337
+metrics_json_container=/tmp/isaaclab_metrics_imp_03_fwd_fast_seed1337.json
 extra_hydra=env.commands.base_velocity.ranges.lin_vel_x=\[1.0,1.0\] env.commands.base_velocity.ranges.lin_vel_y=\[0.0,0.0\]
 play_mode=play.py (stock; no metrics_play.json)
 
