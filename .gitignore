@@ -11,3 +11,5 @@ __pycache__/
 .venv/
 # Local backup tarballs from scripts/backup_portfolio.sh
 backups/
+# Personal planning notes (keep local only)
+docs/NEXT_PLAN_AFTER_GO2.md
