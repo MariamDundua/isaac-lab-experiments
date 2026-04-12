@@ -17,7 +17,8 @@ Small **host-side** helpers around Isaac Lab in Docker:
 | `scripts/play_and_collect.sh` | `docker exec` → `play.py` with `--video` → copy `videos/play` to `artifacts/` |
 | `scripts/export_training_metrics.py` | Last TensorBoard scalars → JSON |
 | `docs/STRESS_TEST.md` | What counts as a stress test + copy-paste commands |
-| `scripts/stress_test_play.sh` | Several play+video runs with different command ranges |
+| `scripts/stress_test_play.sh` | Full stress sweep (23 jobs) |
+| `scripts/stress_test_seeded.sh` | 6 important regimes × 5 seeds (30 jobs) + `aggregate_seeded_metrics.py` |
 | `scripts/isaaclab_rl/play_eval_metrics.py` | Copied into container; play + **`metrics_play.json`** |
 | `scripts/merge_stress_report.py` | Builds **`docs/STRESS_REPORT.md`** from all `metrics_play.json` |
 

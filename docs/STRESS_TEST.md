@@ -9,9 +9,45 @@ docker cp ~/isaac-lab-experiments/source/isaaclab_tasks/isaaclab_tasks/manager_b
   vscode:/workspace/isaaclab/source/isaaclab_tasks/isaaclab_tasks/manager_based/locomotion/velocity/config/go2/rough_env_cfg.py
 ```
 
+## Multi-seed “important” regimes (`stress_test_seeded.sh`)
+
+Runs **6** high-signal conditions, each with **5** seeds (default `SEEDS="42 1337 2025 7 9999"`) → **30** full Sim launches.
+
+```bash
+cd ~/isaac-lab-experiments
+export ISAAC_CHECKPOINT="logs/rsl_rl/unitree_go2_rough/YOUR_RUN/model_1499.pt"
+chmod +x scripts/stress_test_seeded.sh
+./scripts/stress_test_seeded.sh
+```
+
+Fewer seeds (faster):
+
+```bash
+SEEDS="42 43 44" ./scripts/stress_test_seeded.sh
+```
+
+Summarize **mean ± stdev** of `mean_reward_per_step` per regime:
+
+```bash
+python3 scripts/aggregate_seeded_metrics.py
+# -> docs/SEEDED_SUMMARY.md
+```
+
+### Rough wall-clock (order of magnitude)
+
+Each job = Isaac cold-style launch + ~`VIDEO_LENGTH` steps + video encode (varies by GPU).
+
+| Suite | Jobs | Typical total* |
+|-------|------|----------------|
+| `stress_test_seeded.sh` (default) | 30 | **~25–55 min** |
+| `stress_test_play.sh` (full) | 23 | **~18–40 min** |
+| Full play × 5 seeds each | 23×5 = **115** | **~1.5–3.5 h** |
+
+\*Assume ~50–90 s per job on a mid GPU; your first run can be slower (shader cache).
+
 ## Full sweep (`stress_test_play.sh`)
 
-Runs **23** jobs (each: video + `metrics_play.json`). ~20+ minutes of GPU time is typical.
+Runs **23** jobs (each: video + `metrics_play.json`). See timing table above.
 
 ```bash
 cd ~/isaac-lab-experiments
