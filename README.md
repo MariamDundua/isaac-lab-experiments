@@ -1,5 +1,14 @@
 # Isaac Lab experiments (eval + reports)
 
+**Author:** [MariamDundua](https://github.com/MariamDundua) on GitHub.
+
+After you create the remote repo, connect it with:
+
+```bash
+git remote add origin https://github.com/MariamDundua/isaac-lab-experiments.git
+git push -u origin main
+```
+
 Small **host-side** helpers around Isaac Lab in Docker:
 
 | Item | Purpose |
