@@ -63,5 +63,15 @@ python3 scripts/export_training_metrics.py ~/tb_training_run \
 
 ## After the sweep
 
-- Fill a **table** in your report: regime → “stable / falls / wrong-way when cmd forward”.
-- Commit only **`METADATA.txt`** per folder; keep **mp4** out of git or use **Git LFS**.
+- **`play_and_collect.sh`** (default) uses **`play_eval_metrics.py`**: each artifact folder gets **`metrics_play.json`** (mean reward/step, done count, latest `Metrics/*` from env `extras` when present).
+- Build one markdown table for your final report:
+
+```bash
+cd ~/isaac-lab-experiments
+python3 scripts/merge_stress_report.py
+# -> docs/STRESS_REPORT.md
+```
+
+- Re-run any stress job if the folder has **no** `metrics_play.json` (runs before this feature).
+
+- Commit **`METADATA.txt`** + **`metrics_play.json`** + **`docs/STRESS_REPORT.md`**; keep **mp4** out of git or use **Git LFS**.

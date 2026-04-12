@@ -47,7 +47,14 @@ export ARTIFACT_NAME="MY_FIRST_REPORT"
 This writes:
 
 - `artifacts/MY_FIRST_REPORT/METADATA.txt` — exact command + settings (commit this).
+- `artifacts/MY_FIRST_REPORT/metrics_play.json` — mean reward/step, dones, latest logged scalars (commit this).
 - `artifacts/MY_FIRST_REPORT/videos/` — `rl-video-step-0.mp4` (ignored by `.gitignore` by default).
+
+Summary table across stress folders:
+
+```bash
+python3 scripts/merge_stress_report.py   # -> docs/STRESS_REPORT.md
+```
 
 ## Step 4 — Git
 

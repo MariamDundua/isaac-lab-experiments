@@ -18,6 +18,8 @@ Small **host-side** helpers around Isaac Lab in Docker:
 | `scripts/export_training_metrics.py` | Last TensorBoard scalars → JSON |
 | `docs/STRESS_TEST.md` | What counts as a stress test + copy-paste commands |
 | `scripts/stress_test_play.sh` | Several play+video runs with different command ranges |
+| `scripts/isaaclab_rl/play_eval_metrics.py` | Copied into container; play + **`metrics_play.json`** |
+| `scripts/merge_stress_report.py` | Builds **`docs/STRESS_REPORT.md`** from all `metrics_play.json` |
 
 Training code and checkpoints stay in **Isaac Lab** / your container; this repo holds **protocol, scripts, and small artifacts** (metadata + metrics JSON).
 
