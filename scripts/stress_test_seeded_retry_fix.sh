@@ -14,6 +14,7 @@ cd "$ROOT"
 export ISAAC_CHECKPOINT="${ISAAC_CHECKPOINT:?Set ISAAC_CHECKPOINT (path inside container)}"
 export NUM_ENVS="${NUM_ENVS:-16}"
 export VIDEO_LENGTH="${VIDEO_LENGTH:-400}"
+export PLAY_USE_METRICS=1
 SEEDS="${SEEDS:-42 1337 2025 7 9999}"
 
 BASE_MID='env.commands.base_velocity.ranges.lin_vel_x=\[0.6,0.6\] env.commands.base_velocity.ranges.lin_vel_y=\[0.0,0.0\]'

@@ -20,6 +20,8 @@ cd "$ROOT"
 export ISAAC_CHECKPOINT="${ISAAC_CHECKPOINT:?Set ISAAC_CHECKPOINT (path inside container)}"
 export NUM_ENVS="${NUM_ENVS:-16}"
 export VIDEO_LENGTH="${VIDEO_LENGTH:-400}"
+# Override a stale PLAY_USE_METRICS=0 in the caller's shell (needed for metrics_play.json).
+export PLAY_USE_METRICS=1
 
 # Space-separated list of integer seeds
 SEEDS="${SEEDS:-42 1337 2025 7 9999}"

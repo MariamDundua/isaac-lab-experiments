@@ -32,12 +32,26 @@ def main() -> None:
 
     if not groups:
         print("No imp_*_seed*/metrics_play.json found under", root)
-        print(
-            "Hint: if you have imp_* folders with only METADATA/videos, Isaac may have "
-            "exited during shutdown before metrics were written. Use the latest "
-            "play_eval_metrics.py (writes JSON before env.close), then re-run "
-            "stress_test_seeded.sh or individual play_and_collect.sh jobs."
-        )
+        imp_dirs = sorted(p for p in root.iterdir() if p.is_dir() and pat.match(p.name))
+        stock_runs = []
+        for p in imp_dirs:
+            meta = p / "METADATA.txt"
+            if meta.is_file() and "play.py (stock" in meta.read_text(encoding="utf-8", errors="replace"):
+                stock_runs.append(p.name)
+        if stock_runs:
+            print(
+                "Found imp_*_seed* artifacts but METADATA says stock play.py (no metrics). "
+                "You had PLAY_USE_METRICS=0 in the environment. Re-run with "
+                "PLAY_USE_METRICS=1 (stress scripts now force this) or ./scripts/play_and_collect.sh."
+            )
+            print("Example folders:", ", ".join(stock_runs[:8]) + (" …" if len(stock_runs) > 8 else ""))
+        else:
+            print(
+                "Hint: if you have imp_* folders with only METADATA/videos, Isaac may have "
+                "exited during shutdown before metrics were written. Use the latest "
+                "play_eval_metrics.py (writes JSON before env.close), then re-run "
+                "stress_test_seeded.sh or individual play_and_collect.sh jobs."
+            )
         return
 
     lines = [
