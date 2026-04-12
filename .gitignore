@@ -1,0 +1,9 @@
+# Large binaries — keep scripts/docs in git; store videos elsewhere or use Git LFS
+artifacts/**/*.mp4
+artifacts/**/videos/
+*.pt
+*.pth
+__pycache__/
+*.pyc
+.env
+.venv/
