@@ -197,8 +197,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         if args_cli.real_time and sleep_time > 0:
             time.sleep(sleep_time)
 
-    env.close()
-
+    # Write metrics before env.close() / shutdown: Isaac often errors during teardown
+    # and would skip the block if it ran only after env.close().
     if args_cli.metrics_json:
         out = {
             "task": args_cli.task,
@@ -215,6 +215,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         with open(mp, "w", encoding="utf-8") as f:
             json.dump(out, f, indent=2)
         print(f"[INFO] Wrote metrics to {mp}")
+
+    env.close()
 
 
 if __name__ == "__main__":
